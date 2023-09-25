@@ -22,7 +22,7 @@ int main()
   char ch,buffer[15],operators[]="+-*/%";
   FILE *fp;
   int i,j=0;
-  fp=fopen("program.txt","r");
+  fp=fopen("program.c","r");
   if(fp=-1){
    printf("ERROR WHILE OPENING THE FILE");
    exit(0);
