@@ -1,57 +1,95 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
 #include<ctype.h>
-iskeyword(char buffer[]){
- char keywords[32][10]={"auto","break","case","char","const","continue","do","double","else","enum","break","case","char","const","continue","default",
-"do","double","else","enum","extern","float","for","goto",
-"if","int","long","register","return","short","signed",
-"sizeof","static","struct","switch","typedef","union",
-"unsigned","void","volatile","while"};
-int i,flag=0;
-for(i=0;i<32;++i){
-if(strcmp(keywords[i],buffer)==0){
-flag=1;
-break;
-}
-}
-return flag;
-}
+#include<string.h>
+
 int main()
 {
-  char ch,buffer[15],operators[]="+-*/%";
-  FILE *fp;
-  int i,j=0;
-  fp=fopen("program.c","r");
-  if(fp=-1){
-   printf("ERROR WHILE OPENING THE FILE");
-   exit(0);
-  } 
-  while((ch=fgetc(fp))!=EOF)
-  {
-      for(i=0;i<6;++i)
-      {
-              if(ch==operators[i])
-              {
-                   printf("%c is an operator",ch);
-               }
-                   if(isalnum(ch))
-                   {
-                       buffer[j++]=ch;
-                    }
-                    else if((ch==' '|| ch=='\n') && (j!=0))
-                      {
-                          buffer[j]='\0';
-                          j=0;
-                       }
-                       if(iskeyword(buffer)==1)
-                       
-                       printf("%s is keyword",buffer);
-                       else
-                       printf("%s is inidentifier",buffer);
-                       }
-                     }  
-                     
-                      fclose(fp);
-                      return 0;
-                 }                            
+
+	FILE *input, *output;
+	int l=1;
+	int t=0;
+	int j=0;
+	int i,flag;
+	char ch,str[20];
+	input = fopen("input.txt","r");
+	output = fopen("output.txt","w");
+	char keyword[30][30] = {"int","main","if","else","do","while"};
+	fprintf(output,"Line no. \t Token no. \t\t Token \t\t Lexeme\n\n");
+
+	while(!feof(input))
+	{
+		i=0;
+		flag=0;
+		ch=fgetc(input);
+
+		if( ch=='+' || ch== '-' || ch=='*' || ch=='/' )
+		{
+			fprintf(output,"%7d\t\t %7d\t\t Operator\t %7c\n",l,t,ch);
+			t++;
+		}
+
+		else if( ch==';' || ch=='{' || ch=='}' || ch=='(' || ch==')' || ch=='?' || ch=='@' ||ch=='!' || ch=='%')
+
+		{
+
+			fprintf(output,"%7d\t\t %7d\t\t Special symbol\t %7c\n",l,t,ch);
+			t++;
+		}
+
+		else if(isdigit(ch))
+		{
+			fprintf(output,"%7d\t\t %7d\t\t Digit\t\t %7c\n",l,t,ch);
+			t++;
+		}
+
+		else if(isalpha(ch))
+		{
+			str[i]=ch;
+			i++;
+			ch=fgetc(input);
+
+			while(isalnum(ch) && ch!=' ')
+			{
+				str[i]=ch;
+				i++;
+				ch=fgetc(input);
+			}
+
+			str[i]='\0';
+
+			for(j=0;j<=30;j++)
+
+			{
+				if(strcmp(str,keyword[j])==0)
+				{
+					flag=1;
+					break;
+				}
+			}
+
+			if(flag==1)
+			{
+				fprintf(output,"%7d\t\t %7d\t\t Keyword\t %7s\n",l,t,str);
+				t++;
+			}
+
+			else
+			{
+				fprintf(output,"%7d\t\t %7d\t\t Identifier\t %7s\n",l,t,str);
+				t++;
+			}
+
+		}
+
+		else if(ch=='\n')
+
+		{
+			l++;
+		}
+	}
+
+	fclose(input);
+	fclose(output);
+	return 0;
+
+	}
